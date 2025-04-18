@@ -8,5 +8,6 @@ class ProductCreate(BaseModel):
 class ProductRead(ProductCreate):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
