@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models import Product
 from app.schemas import ProductCreate
 
+
 class ProductService:
     @staticmethod
     def create_product(db: Session, product_data: ProductCreate) -> Product:
@@ -23,8 +24,8 @@ class ProductService:
     def update_stock(db: Session, product_id: int, nuevo_stock: int) -> Product:
         product = db.query(Product).filter(Product.id == product_id).first()
         if not product:
-            raise HTTPException(status_code=404, detail="No se encontró el producto a actualizar")
-        product.stock = nuevo_stock
+            raise HTTPException(status_code=404, detail="No se encontró el producto")
+        product.stock = nuevo_stock # type: ignore
         db.commit()
         db.refresh(product)
         return product
