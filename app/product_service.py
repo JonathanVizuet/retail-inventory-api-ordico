@@ -25,7 +25,7 @@ class ProductService:
         product = db.query(Product).filter(Product.id == product_id).first()
         if not product:
             raise HTTPException(status_code=404, detail="No se encontró el producto")
-        product.stock = nuevo_stock # type: ignore
+        product.stock = nuevo_stock  # type: ignore
         db.commit()
         db.refresh(product)
         return product
@@ -38,3 +38,15 @@ class ProductService:
         db.delete(product)
         db.commit()
         return True
+
+    @staticmethod
+    def apply_discount(db: Session, product_id: int, discount: float) -> Product:
+        product = db.query(Product).filter(Product.id == product_id).first()
+        if not product:
+            raise HTTPException(status_code=404, detail="No se encontró el producto")
+        product.discount = discount  # type: ignore
+        product.discount_price = round(
+            product.price - (product.price * discount) / 100, 2)  # type: ignore
+        db.commit()
+        db.refresh(product)
+        return product

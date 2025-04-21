@@ -41,3 +41,11 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return JSONResponse(content={"detail": "Producto eliminado correctamente"})
+
+
+@app.put("/products/{product_id}/apply-discount", response_model=ProductRead)
+def discount(product_id: int, discount: float, db: Session = Depends(get_db)):
+    update_product_discount = ProductService.apply_discount(db, product_id, discount)
+    if not update_product_discount:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    return update_product_discount
