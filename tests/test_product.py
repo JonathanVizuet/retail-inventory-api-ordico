@@ -58,3 +58,20 @@ def test_delete_product():
     # y aqui verificamsoq que no exista ya:
     get_response = client.get(f"/products/{product_id}")
     assert get_response.status_code == 404
+
+
+def test_apply_discount_product():
+    product_id = 4
+    discount = 25
+
+    response = client.put(
+        f"/products/{product_id}/apply-discount", params={"discount": discount}
+    )
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["id"] == product_id
+    assert data["discount"] == discount
+    assert data["discount_price"] == round(
+        data["price"] - (data["price"] * discount) / 100, 2
+    )

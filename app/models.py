@@ -9,3 +9,5 @@ class Product(Base):
     name = Column(String, nullable=False)
     price = Column(Float, nullable=False)
     stock = Column(Integer, nullable=False)
+    discount = Column(Float, nullable=True)
+    discount_price = Column(Float, nullable=True)
