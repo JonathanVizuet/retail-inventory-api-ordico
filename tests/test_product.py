@@ -33,7 +33,7 @@ def test_get_product():
 
 def test_update_stock():
     product_id = 1
-    nuevo_stock = 19
+    nuevo_stock = 7
     response = client.put(f"/products/{product_id}", params={"stock": nuevo_stock})
     assert response.status_code == 200
     data = response.json()
@@ -62,7 +62,7 @@ def test_delete_product():
 
 def test_apply_discount_product():
     product_id = 4
-    discount = 25
+    discount = 50
 
     response = client.put(
         f"/products/{product_id}/apply-discount", params={"discount": discount}
