@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models import Product
+from app.rabbitmq import publish_event
 from app.schemas import ProductCreate
 
 
@@ -25,6 +26,17 @@ class ProductService:
         product = db.query(Product).filter(Product.id == product_id).first()
         if not product:
             raise HTTPException(status_code=404, detail="No se encontró el producto")
+
+        if nuevo_stock < product.stock:
+            cantidad_vendida = product.stock - nuevo_stock
+            publish_event("OrderCreated", {
+                "product_id": product.id,
+                "name": product.name,
+                "stock": nuevo_stock,
+                "quantity": cantidad_vendida,
+                "destination": "Puebla, Mexico"
+            })
+
         product.stock = nuevo_stock  # type: ignore
         db.commit()
         db.refresh(product)
@@ -46,7 +58,8 @@ class ProductService:
             raise HTTPException(status_code=404, detail="No se encontró el producto")
         product.discount = discount  # type: ignore
         product.discount_price = round(
-            product.price - (product.price * discount) / 100, 2)  # type: ignore
+            product.price - (product.price * discount) / 100, 2
+        )  # type: ignore
         db.commit()
         db.refresh(product)
         return product
